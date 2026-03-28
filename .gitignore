@@ -1,0 +1,27 @@
+# macOS
+.DS_Store
+
+# Python — never commit virtualenvs or caches
+**/venv/
+**/.venv/
+**/__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Node / Next (also covered by luxury-gallery/.gitignore)
+**/node_modules/
+**/.next/
+**/out/
+**/dist/
+**/build/
+
+# Secrets & local env
+.env
+.env.*
+!.env.example
+
+# Extracted video frames (regenerate locally; huge and noisy in git)
+videos/video_frames/
