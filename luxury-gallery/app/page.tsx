@@ -1,65 +1,82 @@
-import Image from "next/image";
+// src/app/page.js
+"use client";
 
-export default function Home() {
+import { useState } from 'react';
+import { artworks } from '../data/artworks';
+import ArtCanvas from './components/ArtCanvas';
+
+export default function Gallery() {
+  // 1. State: Track which artwork is currently on screen
+  const [activeIndex, setActiveIndex] = useState(0);
+  const activeArtwork = artworks[activeIndex];
+
+  // 2. Navigation Handlers (Loops back to the start when reaching the end)
+  const handleNext = () => {
+    setActiveIndex((prev) => (prev === artworks.length - 1 ? 0 : prev + 1));
+  };
+
+  const handlePrev = () => {
+    setActiveIndex((prev) => (prev === 0 ? artworks.length - 1 : prev - 1));
+  };
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="min-h-screen bg-[#f5f5f5] text-[#1a1a1a] font-sans flex flex-col selection:bg-black selection:text-white">
+      
+      {/* --- TOP NAVIGATION --- */}
+      <header className="flex justify-between items-center px-12 py-10">
+        <div className="text-xl font-bold tracking-tighter uppercase">Studio</div>
+        <div className="flex gap-12 text-sm tracking-wide text-gray-400 font-medium">
+          <button className="hover:text-black transition-colors duration-300">Clients</button>
+          <button className="hover:text-black transition-colors duration-300">Contact</button>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+        <button className="px-8 py-3 bg-black text-white text-xs tracking-[0.2em] uppercase hover:bg-gray-800 transition-colors duration-300">
+          Get in Touch
+        </button>
+      </header>
+
+      {/* --- MAIN GRID LAYOUT --- */}
+      <main className="flex-1 grid grid-cols-12 gap-16 px-12 pb-12 items-center">
+        
+        {/* LEFT COLUMN: Typography & Context */}
+        <div className="col-span-5 flex flex-col pr-8">
+          {/* Animated wrapper for smooth text swapping */}
+          <div key={activeArtwork.id} className="animate-fade-in">
+            <h1 className="text-6xl lg:text-7xl font-medium tracking-tight mb-8 leading-[1.1]">
+              {activeArtwork.title}
+            </h1>
+            <p className="text-lg text-gray-500 leading-relaxed max-w-md font-light">
+              {activeArtwork.description}
+            </p>
+          </div>
+        </div>
+
+        {/* RIGHT COLUMN: The WebGL Canvas Area */}
+        <div className="col-span-7 relative flex flex-col h-[75vh]">
+          
+          {/* Forward / Back Controls */}
+          <div className="absolute top-6 right-6 z-20 flex gap-3">
+            <button 
+              onClick={handlePrev}
+              className="w-12 h-12 rounded-full bg-white/80 backdrop-blur-md hover:bg-white text-black flex items-center justify-center transition-all duration-300 shadow-sm"
+              aria-label="Previous Artwork"
+            >
+              ←
+            </button>
+            <button 
+              onClick={handleNext}
+              className="w-12 h-12 rounded-full bg-white/80 backdrop-blur-md hover:bg-white text-black flex items-center justify-center transition-all duration-300 shadow-sm"
+              aria-label="Next Artwork"
+            >
+              →
+            </button>
+          </div>
+
+          {/* THE LIVE CANVAS */}
+          <ArtCanvas activeData={activeArtwork} />
+
         </div>
       </main>
+
     </div>
   );
 }
